@@ -1,0 +1,29 @@
+---
+- name: Install Postfix
+  yum:
+    name: postfix
+    state: latest
+  tags:
+    - client
+  notify:
+    - start_postfix
+- name: Install dovacot
+  yum:
+    name: dovecot
+    state: latest
+  tags: local
+  notify:
+    - start_dovecot
+
+- name: copy the main.cf configuration
+  copy:
+    src: /home/deepuf5/playbook/dev-tags/main.cf
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: 0664
+  tags:
+    - client
+  notify:
+    - restart_postfix
+ 

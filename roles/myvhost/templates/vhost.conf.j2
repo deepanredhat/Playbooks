@@ -1,0 +1,12 @@
+<VirtualHost *:80>
+    ServerAdmin webmaster@robo-managednode
+    ServerName robo-managednode
+    ErrorLog logs/robo-managednode-error.log 
+    CustomLog logs/robo-managednode-common.log common
+    DocumentRoot /var/www/vhosts/robo-managednode/
+    <Directory /var/www/vhosts/robo-managednode/>
+         Options +Indexes +followSymlinks +Includes
+         Order allow,deny
+         Allow from all
+    </Directory>
+</VirtualHost>

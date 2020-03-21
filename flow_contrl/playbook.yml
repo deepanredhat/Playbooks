@@ -1,0 +1,31 @@
+---
+- hosts: client
+  become: yes
+  vars:
+    db_pkg: mariadb-server
+    db_srv: mariadb
+    db_users:
+        - db_admin
+        - db_user
+    configure_database_path: /etc/my.cf
+  tasks:
+  - name: create mariaDB users
+    user:
+      name: "{{ item }}"
+    with_items: "{{ db_users }}"
+    when: inventory_hostname in groups['client']
+  - name: install mariadb
+    yum:
+      name: "{{ db_pkg }}"
+    when: db_pkg is defined
+
+  - name: configure the database softwar
+    include: configure_database.yml
+    vars:
+      extra_pkgs:
+        - mariadb-bench
+        - mariadb-libs
+        - mariadb-test
+    when: configure_database_path is defined
+    
+

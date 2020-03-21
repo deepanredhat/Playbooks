@@ -1,0 +1,14 @@
+---
+- hosts: client
+  become: yes
+
+  pre_tasks:
+    - debug:
+        msg: 'Beginning with web server conf.'
+
+  roles:
+    - myvhost
+
+  post_tasks:
+    - debug:
+        msg: 'web server has been configured successfully'

@@ -1,0 +1,16 @@
+---
+- hosts: client
+  become: yes
+  tasks:
+    - name: install apache service
+      yum:
+        name:
+          - "{{ ansible_local.custom.general.package }}"
+          - "{{ ansible_local.custom.general1.package }}"
+        state: latest
+    - name: start the service
+      service:
+        name: 
+          - "{{ ansible_local.custom.general.service }}"
+          - "{{ ansible_local.custom.general1.service }}"
+        state: "{{ ansible_local.custom.general(*).state }}"

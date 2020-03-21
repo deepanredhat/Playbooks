@@ -1,0 +1,47 @@
+---
+- hosts: client
+  become: yes
+  vars:
+    web_pkg: httpd
+    firewall_pkg: firewalld
+    python_pkg: python-httplib2
+    firewall_service: firewalld
+    web_service: httpd
+    rule: http
+  tasks:
+    - name: install all packages with latest version
+      yum:
+        name:
+          - "{{ web_pkg }}"
+          - "{{ firewall_pkg }}"
+          - "{{ python_pkg }}"
+        state: latest
+    - name: service start
+      service:
+        name: "{{ firewall_service }}"
+        enabled: true
+        state: started
+    - name: service start for httpd
+      service:
+        name: "{{ web_service }}"
+        enabled: true
+        state: started
+    - name: copy the content to index.html
+      copy:
+        content: "welcome to KP world"
+        dest: /var/www/html/index.html
+    - name: allow the firewall port
+      firewalld:
+        service: "{{ rule }}"
+        permanent: true
+        immediate: true
+        state: enabled
+
+- hosts: local
+  become: false
+  tasks:
+    - name: validate the webservice
+      uri:
+        url: http://10.128.0.14
+        status_code: 200
+

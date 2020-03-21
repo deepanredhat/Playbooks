@@ -1,0 +1,34 @@
+---
+- hosts: client
+  become: yes
+  vars:
+    rule: http
+  tasks:
+    - name: Include the variables from yaml file
+      include_vars: vars/variables.yml
+
+    - name: Include env file and set the variables
+      include: tasks/environment.yml
+      vars:
+        package: httpd
+        service: httpd
+        svc_state: started
+    - name: install firewall service
+      yum:
+        name: "{{ firewall_pkg }}"
+        state: latest
+    - name: start the service
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+    - name: open the port for {{ rule }}
+      firewalld:
+        service: "{{ rule }}"
+        immediate: yes
+        permanent: yes
+        state: enabled
+    - name: copy the index file
+      copy:
+        content: "{{ ansible_fqdn }} has been customised using ansible on the {{ ansible_date_time.date }}\n"
+        dest: /var/www/html/index.html

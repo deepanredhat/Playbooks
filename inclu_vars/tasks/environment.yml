@@ -1,0 +1,10 @@
+---
+  - name: install the {{ package }} pkg
+    yum:
+      name: "{{ package }}"
+      state: latest
+  - name: start the {{ service }} srvc
+    service:
+      name: "{{ service }}"
+      state: "{{ svc_state }}"
+    

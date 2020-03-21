@@ -1,0 +1,44 @@
+---
+- name: installing mariadb server
+  hosts: client
+  become: yes
+  vars:
+    db_pkgs:
+      - mariadb-server
+      - MySQL-python
+    db_srv: mariadb
+    src_file: "/home/deepuf5/playbook/flow_contrl/my.cf"
+    dest_file: /etc/my.cf
+  tasks:
+    - name: install the {{ db_pkgs }} packages
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items: "{{ db_pkgs }}"
+      notify:
+        - start_service
+    - name: copy and install the file {{ dest_file }}
+      copy:
+        src: "{{ src_file }}"
+        dest: "{{ dest_file }}"
+        owner: root
+        group: root
+        mode: 0664
+        force: yes
+      notify:
+        - restart_service
+        - set_password
+
+  handlers:
+    - name: start_service
+      service:
+        name: "{{ db_srv }}"
+        state: started
+    - name: restart_service
+      service:
+        name: "{{ db_srv }}"
+        state: restarted
+    - name: set_password
+      mysql_user:
+        name: root
+        password: redhat123

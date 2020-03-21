@@ -1,0 +1,31 @@
+---
+- hosts: client
+  become: yes
+  vars:
+    web_pkgs: httpd
+    db_pkgs: mariadb-server
+    db_srv: mariadb
+  tasks:
+    - name: Check local time
+      command: date
+      register: command_result
+      changed_when: true
+    - name: print local time
+      debug:
+        var: command_result["stdout"]
+    - block:
+        - name: Install {{ web_pkgs }} package
+          yum:
+            name: "{{ web_pkgs }}"
+            state: latest
+          failed_when: web_pkgs =="httpd"
+      rescue:
+        - name: Install {{ db_pkgs }} package
+          yum:
+            name: "{{ db_pkgs }}"
+            state: latest
+      always:
+        - name: restart {{ db_srv }}  service
+          service:
+            name: "{{ db_srv }}"
+            state: started

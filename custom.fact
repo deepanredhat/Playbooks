@@ -1,0 +1,10 @@
+[general]
+package = httpd 
+service = httpd
+state = started
+
+[general1]
+package = nfs* 
+service = nfs
+state = started
+

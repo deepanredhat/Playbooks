@@ -1,0 +1,15 @@
+---
+- yum:
+    name: "{{ extra_pkgs }}"
+- copy:
+    src: /home/deepuf5/playbook/flow_contrl/my.cf
+    dest: "{{ configure_database_path }}"
+    owner: root
+    group: root
+    mode: 0664
+    force: yes
+
+- service:
+    name: "{{ db_srv }}"
+    state: started
+    enabled: true
